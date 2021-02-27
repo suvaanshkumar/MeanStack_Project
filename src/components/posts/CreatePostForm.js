@@ -1,7 +1,5 @@
 import { Box, Button, Card, CardContent, CardHeader, FormGroup, TextField, Typography } from '@material-ui/core';
 import React, { useState } from 'react';
-import { useContext } from 'react';
-import PostsContext from '../contexts/PostsContext';
 
 const CreatePostForm = (props) => {
 

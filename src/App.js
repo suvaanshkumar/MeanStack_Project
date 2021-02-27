@@ -3,8 +3,8 @@ import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import Header from './components/Header';
 import Home from './components/Home';
 import Footer from './components/Footer';
-import CreatePostForm from './components/CreatePostForm';
-import Posts from './components/Posts';
+import CreatePostForm from './components/posts/CreatePostForm';
+import Posts from './components/posts/Posts';
 
 function App() {
 

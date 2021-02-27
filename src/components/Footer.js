@@ -11,7 +11,7 @@ const Footer = (props) => {
                         Blog
                     </Typography>
                     <Typography variant="subtitle1" align="center" color="inherit" component="p">
-                        {'Copyright © 2021'}
+                        {'Copyright © Alpha Development Inc. 2021'}
                     </Typography> 
                 </Box>
 
