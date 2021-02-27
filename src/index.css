@@ -30,4 +30,13 @@ code {
   flex: 1 0 auto;
 }
 
+.form-row{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justifyContent: space-between;
+  width: 80%;
+  marginTop: 20px;
+}
+
 
