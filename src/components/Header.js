@@ -22,8 +22,8 @@ const Header = (props) => {
                     <Button color="inherit">Contact Us</Button>
 
                     <span className="spacer"/>
-                    <Button color="inherit">Login</Button>
-                    <Button color="inherit">Signup</Button>
+                    <Button color="inherit" href="/">Login</Button>
+                    <Button color="inherit" href="/signup">Signup</Button>
                 </Toolbar>
             </AppBar>
         </div>
