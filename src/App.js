@@ -10,8 +10,12 @@ import Signup from './components/authorization/Signup/Signup';
 <<<<<<< Updated upstream
 import Categories from './components/categories/Categories';
 import ContactForm from './components/ContactForm';
+<<<<<<< Updated upstream
 =======
 import  TweetList from './components/socials/TweetList'
+>>>>>>> Stashed changes
+=======
+import TweetList from './components/TweetList';
 >>>>>>> Stashed changes
 
 function App() {
@@ -29,8 +33,13 @@ function App() {
           <Route path="/signup" component={Signup}/>
 <<<<<<< Updated upstream
           <Route path="/contactUs" component={ContactForm}/>
+<<<<<<< Updated upstream
 =======
           <Route path="/browse" component={TweetList}/>
+>>>>>>> Stashed changes
+=======
+          <Route path="/contactUs" component={TweetList}/>
+
 >>>>>>> Stashed changes
         </Switch>
 

@@ -21,10 +21,15 @@ const Header = (props) => {
 <<<<<<< Updated upstream
                     <Button color="inherit" href="/Categories">Categories</Button>
                     <Button color="inherit" href="/contactUs">Contact Us</Button>
+<<<<<<< Updated upstream
 =======
                     <Button color="inherit">Categories</Button>
                     <Button color="inherit">Contact Us</Button>
                     <Button color="inherit" href="/browse">Browse</Button>
+>>>>>>> Stashed changes
+=======
+                    <Button color="inherit" href="/browse">Browse</Button> 
+
 >>>>>>> Stashed changes
 
                     <span className="spacer"/>
