@@ -7,6 +7,7 @@ import CreatePostForm from './components/posts/CreatePostForm';
 import Posts from './components/posts/Posts';
 import Login from './components/authorization/Login/Login';
 import Signup from './components/authorization/Signup/Signup';
+import Categories from './components/categories/Categories';
 
 function App() {
 
@@ -18,6 +19,7 @@ function App() {
           <Route path="/" exact component={Login}/>
           <Route path="/posts" component={Posts}/>
           <Route path="/createPost" component={CreatePostForm}/>
+          <Route path="/categories" component={Categories}/>
           <Route path="/home" component={Home}/>
           <Route path="/signup" component={Signup}/>
         </Switch>
