@@ -7,8 +7,12 @@ import CreatePostForm from './components/posts/CreatePostForm';
 import Posts from './components/posts/Posts';
 import Login from './components/authorization/Login/Login';
 import Signup from './components/authorization/Signup/Signup';
+<<<<<<< Updated upstream
 import Categories from './components/categories/Categories';
 import ContactForm from './components/ContactForm';
+=======
+import  TweetList from './components/socials/TweetList'
+>>>>>>> Stashed changes
 
 function App() {
 
@@ -23,7 +27,11 @@ function App() {
           <Route path="/categories" component={Categories}/>
           <Route path="/home" component={Home}/>
           <Route path="/signup" component={Signup}/>
+<<<<<<< Updated upstream
           <Route path="/contactUs" component={ContactForm}/>
+=======
+          <Route path="/browse" component={TweetList}/>
+>>>>>>> Stashed changes
         </Switch>
 
       </div>
