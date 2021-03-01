@@ -19,7 +19,7 @@ const Header = (props) => {
 
                     <Button color="inherit" href="/posts">Posts</Button>
                     <Button color="inherit" href="/Categories">Categories</Button>
-                    <Button color="inherit">Contact Us</Button>
+                    <Button color="inherit" href="/contactUs">Contact Us</Button>
 
                     <span className="spacer"/>
                     <Button color="inherit" href="/">Login</Button>
