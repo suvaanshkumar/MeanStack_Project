@@ -8,6 +8,7 @@ import Posts from './components/posts/Posts';
 import Login from './components/authorization/Login/Login';
 import Signup from './components/authorization/Signup/Signup';
 import Categories from './components/categories/Categories';
+import ContactForm from './components/ContactForm';
 
 function App() {
 
@@ -22,6 +23,7 @@ function App() {
           <Route path="/categories" component={Categories}/>
           <Route path="/home" component={Home}/>
           <Route path="/signup" component={Signup}/>
+          <Route path="/contactUs" component={ContactForm}/>
         </Switch>
 
       </div>
