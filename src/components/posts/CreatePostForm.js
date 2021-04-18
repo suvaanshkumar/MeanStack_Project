@@ -1,8 +1,7 @@
-import { Box, Button, Card, CardContent, TextField, Typography } from '@material-ui/core';
+import { Box, Button, Card, CardContent, CircularProgress, FormControl, MenuItem, Select, TextField, Typography } from '@material-ui/core';
 import axios from 'axios';
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import CustomMap from './CustomMap';
-
 
 const CreatePostForm = (props) => {
 
@@ -10,12 +9,17 @@ const CreatePostForm = (props) => {
         title: '',
         place: '',
         country: '',
-        image: null,
-        description: ''
+        image: '',
+        description: '',
+        category: ''
     });
+    const [image, setImage] = useState(null);
     const fileInputRef = useRef();
     const mapRef = useRef();
-    const [focus, setFocus] = useState(false); 
+    const [focus, setFocus] = useState(false);
+    const [categories, setCategories] = useState([]);
+    const [countries, setCountries] = useState([]);
+    const [loading, setLoading] = useState(false); 
 
     const handleChange = (e) => {
         setPost( {...post, [e.target.name] : e.target.value} );
@@ -25,32 +29,71 @@ const CreatePostForm = (props) => {
         setPost({...post, lat: latitude, lng: longitude});
     }
 
+    const readFileAsync = (file) => {
+        return new Promise((resolve, reject) => {
+          let reader = new FileReader();
+          reader.readAsDataURL(file)
+          reader.onloadend = () => {
+            resolve(reader.result);
+          };
+          reader.onerror = reject;
+        })
+    }
+
+    useEffect(() => {
+        const loadData = async() => {
+            const categoryData = await axios.get(process.env.REACT_APP_BACKEND_URL + 'categories');
+            const countryData = await axios.get('https://restcountries.eu/rest/v2/all');
+            setCategories(categoryData.data);
+            setCountries(countryData.data);
+            setPost({
+                ...post,
+                category: categoryData.data[0].header,
+                country: countryData.data[0].name
+            });
+        }
+        loadData();
+    },[]);
+
+    useEffect(() => {
+        //Converting image to base64 string
+        const imageToBase64 = async() => {
+            if (image){
+                const imageString = await readFileAsync(image);
+                setPost( {...post, image : imageString} );
+            }
+        }
+        imageToBase64();
+
+    }, [image]);
+
     const handleSubmit = async (e) => {
         e.preventDefault();
+        
         console.log(post);
         const location = (mapRef.current.state.markerPosition);
         let config = {
             headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
+                'Content-Type': 'application/json',
                 'x-auth-token': localStorage.getItem('token')
             },
         };
 
-        let formData = new FormData();
-        formData.append('title', 'kek');
-        formData.append('place', post.place);
-        formData.append('country', post.country);
-        formData.append('image', post.image);
-        formData.append('description', post.description);
-        formData.append('lat', location.lat());
-        formData.append('lng', location.lng());
+        let data = {
+            ...post, 
+            lat: location.lat(),
+            lng: location.lng()
+        };
+        console.log(data);
 
         try {
+            setLoading(true);
             const response = await axios.post(
-                'http://localhost:4000/api/posts',
-                formData,
+                process.env.REACT_APP_BACKEND_URL + 'posts',
+                data,
                 config
             );
+            setLoading(false);
 
             console.log(response);
 
@@ -75,7 +118,7 @@ const CreatePostForm = (props) => {
 
     const handleFileDrop = (e) => {
         e.preventDefault();
-        setPost({...post, image: e.dataTransfer.files[0]});
+        setImage(e.dataTransfer.files[0]);
     }
 
     const fileInputClicked = () => {
@@ -83,8 +126,16 @@ const CreatePostForm = (props) => {
     }
 
     const fileSelected = () => {
-        setPost({...post, image: fileInputRef.current.files[0]});
+        setImage(fileInputRef.current.files[0]);
     }
+
+    if (loading) return (
+        <Box display="flex" alignItems="center" justifyContent="center" height="100%">
+
+          <CircularProgress size={80}/>
+
+        </Box>
+    )
 
     return (
         <Box width="60%" marginX="auto" marginTop="40px">
@@ -115,8 +166,34 @@ const CreatePostForm = (props) => {
                      width="80%" marginTop="20px">
                         <Typography variant="h6">Country:</Typography>
                         <Box marginLeft="10px">
-                            <TextField required variant="outlined" label="Country" size="small"
-                                name="country" onChange={handleChange} value={post.country}/>
+                            <FormControl variant="outlined" size="small" fullWidth>
+                                <Select
+                                name="country"
+                                value={post.country}
+                                onChange={handleChange}>
+                                    {countries.map((c) => (
+                                        <MenuItem value={c.name} key={c.alpha3Code}>{c.name}</MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
+
+                        </Box>
+                    </Box>
+
+                    <Box display="flex" flexDirection="row" alignItems="center"
+                     width="80%" marginTop="20px">
+                        <Typography variant="h6">Category:</Typography>
+                        <Box marginLeft="10px">
+                            <FormControl variant="outlined" size="small">
+                                <Select
+                                name="category"
+                                value={post.category}
+                                onChange={handleChange}>
+                                    {categories.map((c) => (
+                                        <MenuItem value={c.header} key={c._id}>{c.header}</MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
                         </Box>
                     </Box>
 
@@ -137,14 +214,14 @@ const CreatePostForm = (props) => {
                     <Box marginTop="20px">
                         <Typography variant="h6">Picture:</Typography>
                     
-                        <Box width="60%" height="100px" marginTop="10px" display="flex" justifyContent="center" alignItems="center"
-                        className={(focus) || (post.image) ? 'dropzone-focused' : 'dropzone'} onClick={fileInputClicked}
+                        <Box width="100%" height="100px" marginTop="10px" display="flex" justifyContent="center" alignItems="center"
+                        className={(focus) || (image) ? 'dropzone-focused' : 'dropzone'} onClick={fileInputClicked}
                         onDragEnter={handleDragEnter} onDragLeave={handleDragLeave} onDrop={handleFileDrop}
                         onDragOver={handleDragOver}>
-                            {(post.image) &&
-                                <div>{post.image.name}</div>
+                            {(image) &&
+                                <div>{image.name}</div>
                             }
-                            {(!post.image) &&
+                            {(!image) &&
                                 <div>Drop Image here or click to Upload</div>
                             }
                         </Box>
