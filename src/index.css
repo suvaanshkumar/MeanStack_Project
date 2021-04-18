@@ -55,4 +55,16 @@ code {
   cursor: pointer;
 }
 
+.responsive-image {
+  width: 100%;
+  height: auto;
+}
+
+.post-subheader{
+  cursor: pointer;
+}
+
+.post-subheader:hover {
+  text-decoration: underline;
+}
 

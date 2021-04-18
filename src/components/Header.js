@@ -18,6 +18,7 @@ const Header = (props) => {
                     <span className="spacer"/>
 
                     <Button color="inherit" href="/posts">Posts</Button>
+                    <Button color="inherit" href="/createPost">Create Post</Button>
                     <Button color="inherit" href="/Categories">Categories</Button>
                     <Button color="inherit" href="/contactUs">Contact Us</Button>
                     <Button color="inherit" href="/browse">Browse</Button>
