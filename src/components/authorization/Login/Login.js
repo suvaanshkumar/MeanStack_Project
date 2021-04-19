@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { Button, Container, TextField } from '@material-ui/core';
 import { SendOutlined } from '@material-ui/icons';
 import './Login.css';
 import { useHistory } from 'react-router-dom';
 import axios from 'axios';
+import AuthContext from '../../../contexts/AuthContext';
 
 const Login = () => {
 
@@ -12,6 +13,7 @@ const Login = () => {
         email: '',
         password: '',
     });
+    const auth = useContext(AuthContext);
 
     const handleChange = (e) => {
     setLoginData({ ...loginData, [e.target.name]: e.target.value });
@@ -37,7 +39,14 @@ const Login = () => {
             );
 
             if (response.status === 200) {
+                console.log(response.data);
                 localStorage.setItem('token', response.data.token);
+                localStorage.setItem('userId', response.data.userId);
+                localStorage.setItem('username', response.data.username);
+                const now = new Date();
+                const expirationDate = new Date(now.getTime() + response.data.expiresIn * 1000);
+                localStorage.setItem('expiration', expirationDate.toISOString());
+                auth.login();
                 history.push('/posts');
             }
 
