@@ -8,8 +8,11 @@ import couple from './images/couple.jpg';
 import family from './images/family.PNG';
 import lgbtq from './images/lgbtq.jpg';
 import luxury from './images/luxury.PNG';
+import React, { useState, useEffect } from 'react';
+
 import solotravel from './images/solotravel.PNG';
 import Weekenders from './images/weekenders.PNG';
+import { post } from 'request';
 
 const Categories =()=>{
     const items = [
@@ -18,7 +21,7 @@ const Categories =()=>{
           header: 'Weekenders',
           description:
             'Find your best nearest Getaway',
-          image: (Weekenders)
+          image:(Weekenders)
         },
         {
           id: 2,
@@ -60,7 +63,7 @@ const Categories =()=>{
               header: 'Solo TRAVEL ',
               description:
                 'Adventure travel is the foundation of our travel blog so we love finding people pushing their limits. These are true adventurers that see the world through the lens of adventure. if you want to be inspired to push your limits, these are the people to follow.',
-              image: (family)
+              image: (solotravel)
             }];
 
         return(

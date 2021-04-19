@@ -22,6 +22,8 @@ const Header = (props) => {
                     <Button color="inherit" href="/Categories">Categories</Button>
                     <Button color="inherit" href="/contactUs">Contact Us</Button>
                     <Button color="inherit" href="/browse">Browse</Button>
+                    <Button color="inherit" href="/trending">Trending Posts</Button>
+                    
 
                     <span className="spacer"/>
                     <Button color="inherit" href="/">Login</Button>

@@ -11,6 +11,7 @@ import Categories from './components/categories/Categories';
 import ContactForm from './components/ContactForm';
 import ReactNotifications from 'react-notifications-component';
 import 'react-notifications-component/dist/theme.css'
+import Trending from './components/Trending';
 
 function App() {
   
@@ -29,6 +30,8 @@ function App() {
           <Route path="/home" component={Home}/>
           <Route path="/signup" component={Signup}/>
           <Route path="/contactUs" component={ContactForm}/>
+          <Route path="/trending" component={Trending}/>
+         
           
 
         </Switch>
