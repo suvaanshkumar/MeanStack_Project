@@ -13,33 +13,93 @@ import ReactNotifications from 'react-notifications-component';
 import 'react-notifications-component/dist/theme.css'
 import Trending from './components/Trending';
 import CreateCategory from './components/categories/CreateCategory';
+import { useCallback, useEffect, useState } from 'react';
+import AuthContext from './contexts/AuthContext';
 
-function App() {
-  
+const App = () => {
+
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [currentUser, setCurrentUser] = useState({})
+  const login = useCallback(() => {
+    setIsLoggedIn(true);
+    const authData = getAuthData();
+    setCurrentUser({
+      userId: authData.userId,
+      username: authData.username
+    })
+  }, []);
+  const logout = useCallback(() => {
+    clearAuthData();
+    setIsLoggedIn(false);
+  }, []);
+
+  useEffect(() => {
+    const authData = getAuthData();
+    if (!authData){
+      return;
+    }
+    console.log('.......continue....')
+    const now = new Date();
+    const expiresIn = authData.expirationDate.getTime() - now.getTime();
+    if (expiresIn > 0){
+      login();
+    }
+  },[]);
+
+  const getAuthData = () => {
+    const token = localStorage.getItem('token');
+    const expirationDate = localStorage.getItem('expiration');
+    const userId = localStorage.getItem('userId');
+    const username = localStorage.getItem('username');
+    if (!token || !expirationDate){
+      return;
+    }
+    return {
+      token: token,
+      expirationDate: new Date(expirationDate),
+      userId: userId,
+      username: username
+    };
+  }
+
+  const clearAuthData = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('expiration');
+    localStorage.removeItem('userId');
+    localStorage.removeItem('username');
+  }
 
   return (
-    
-    <BrowserRouter>
-    <ReactNotifications />
-      <Header/>
-      <div className="content">
-        <Switch>
-          <Route path="/" exact component={Login}/>
-          <Route path="/posts" component={Posts}/>
-          <Route path="/createPost" component={CreatePostForm}/>
-          <Route path="/categories" component={Categories}/>
-          <Route path="/home" component={Home}/>
-          <Route path="/signup" component={Signup}/>
-          <Route path="/contactUs" component={ContactForm}/>
-          <Route path="/trending" component={Trending}/>
-          <Route path="/createCategory" component={CreateCategory}/>
-          
 
-        </Switch>
+    <AuthContext.Provider
+      value={{
+        isLoggedIn: isLoggedIn,
+        currentUser: currentUser,
+        login: login,
+        logout: logout }}
+    >
+      <BrowserRouter>
+      <ReactNotifications />
+        <Header/>
+        <div className="content">
+          <Switch>
+            <Route path="/" exact component={Login}/>
+            <Route path="/posts" component={Posts}/>
+            <Route path="/createPost" component={CreatePostForm}/>
+            <Route path="/categories" component={Categories}/>
+            <Route path="/home" component={Home}/>
+            <Route path="/signup" component={Signup}/>
+            <Route path="/contactUs" component={ContactForm}/>
+            <Route path="/trending" component={Trending}/>
+            <Route path="/createCategory" component={CreateCategory}/>
+            
 
-      </div>
-      <Footer/>
-    </BrowserRouter>
+          </Switch>
+
+        </div>
+        <Footer/>
+      </BrowserRouter>
+    </AuthContext.Provider>
   );
 }
 
