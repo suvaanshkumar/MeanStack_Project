@@ -114,6 +114,7 @@ const Post = (props) => {
                 }
                 
                 <CardContent>
+                    <Typography>{props.post.category}</Typography>
                     <Typography>
                         {props.post.description}
                     </Typography>
