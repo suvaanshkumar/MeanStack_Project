@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useEffect } from "react";
-import { Box, Button, Card, CardContent, CircularProgress, FormControl, MenuItem, Select, TextField, Typography } from '@material-ui/core';
+import { Box, FormControl, MenuItem, Select, Typography } from '@material-ui/core';
 
 import { useState } from "react";
 import Post from "./Post";
@@ -9,7 +9,7 @@ const Posts = () => {
 
     const [posts, setPosts] = useState([]);
     const [categories, setCategories] = useState([]);
-    const [category, setCategory] = useState([]);
+    const [category, setCategory] = useState('');
     useEffect(() => {
         axios.get(process.env.REACT_APP_BACKEND_URL + 'posts').then((response) => {
             setPosts(response.data);
@@ -28,10 +28,12 @@ const Posts = () => {
         
     };
     useEffect(() => {
+        if (category !== ''){
         axios.get(process.env.REACT_APP_BACKEND_URL + 'filterPostByCategory/'+ category).then((response) => {
             setPosts(response.data);
             console.log(response);
         });
+        }
     },[category]);
     return (
 

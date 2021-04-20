@@ -38,11 +38,13 @@ const App = () => {
     if (!authData){
       return;
     }
-    console.log('.......continue....')
     const now = new Date();
     const expiresIn = authData.expirationDate.getTime() - now.getTime();
     if (expiresIn > 0){
       login();
+    }
+    else{
+      clearAuthData();
     }
   },[]);
 
