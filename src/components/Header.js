@@ -42,6 +42,7 @@ const Header = (props) => {
                             <Button
                                 color="inherit"
                                 startIcon={<AccountCircle/>}
+                                href={"/user/" + auth.currentUser.userId}
                             >
                                 {auth.currentUser.username}
                             </Button>
