@@ -15,6 +15,7 @@ import Trending from './components/Trending';
 import CreateCategory from './components/categories/CreateCategory';
 import { useCallback, useEffect, useState } from 'react';
 import AuthContext from './contexts/AuthContext';
+import UserPosts from './components/posts/UserPosts';
 
 const App = () => {
 
@@ -94,8 +95,7 @@ const App = () => {
             <Route path="/contactUs" component={ContactForm}/>
             <Route path="/trending" component={Trending}/>
             <Route path="/createCategory" component={CreateCategory}/>
-            
-
+            <Route path="/user/:userId" component={UserPosts}/>
           </Switch>
 
         </div>
