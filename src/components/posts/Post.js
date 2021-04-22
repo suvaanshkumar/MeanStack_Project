@@ -4,7 +4,7 @@ import { Bookmark, ChatBubble, Delete, Edit, Favorite, MoreVert } from "@materia
 import { store } from 'react-notifications-component';
 import 'react-notifications-component/dist/theme.css';
 import 'animate.css';
-import MapDialog from "./MapDialog";
+import MapDialog from "../maps/MapDialog";
 import AuthContext from "../../contexts/AuthContext";
 import axios from "axios";
 import { useHistory } from "react-router";
@@ -54,6 +54,38 @@ const Post = (props) => {
       }
     })
   }
+
+  const handleDelete = async () => {
+
+
+    let headers = {
+      'Content-Type': 'application/json',
+      'x-auth-token': localStorage.getItem('token')
+    };
+
+    let data = {
+        id: props.post._id
+    };
+
+    try {
+      const response = await axios.delete(
+        process.env.REACT_APP_BACKEND_URL + 'posts',
+        {
+            headers,
+            data
+        }
+      );
+
+      if (response.status === 204){
+        props.handleDelete(props.post._id);
+      }
+      console.log(response);
+
+    } catch (err) {
+        console.log(err.response.data);
+    }
+  }
+
 
   const handleLike = async () => {
 
@@ -108,7 +140,8 @@ const Post = (props) => {
 
     return (
       <Box width="100%">
-        <MapDialog open={openMap} close={handleCloseMap}/>
+        <MapDialog open={openMap} close={handleCloseMap}
+        location={{lat: props.post.lat, lng: props.post.lng}}/>
         <Box width="40%" marginTop="20px" marginX="auto">
           
             <Card>
@@ -117,10 +150,10 @@ const Post = (props) => {
                     <Box>
                       {auth.currentUser.userId === props.post.userId &&
                         <Box>
-                          <IconButton aria-label="edit post">
+                          <IconButton aria-label="edit post" href={"/createPost/" + props.post._id}>
                               <Edit />
                           </IconButton>
-                          <IconButton aria-label="settings">
+                          <IconButton aria-label="settings" onClick={handleDelete}>
                             <Delete />
                           </IconButton>
                         </Box>
