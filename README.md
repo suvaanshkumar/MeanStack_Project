@@ -17,6 +17,7 @@
 
 ### Herman:
 - [x] Show notifications (on like and adding to favorites)
+- [x] Browse Page 
 
 ### Olexander:
 - [x] Contact Us form (sending message to the server)
