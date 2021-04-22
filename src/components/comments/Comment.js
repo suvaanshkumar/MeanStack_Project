@@ -39,6 +39,10 @@ const Comment = (props) => {
         }
     }
 
+    const handleSwitchToEdit = () => {
+        props.switchToEdit(props.comment.comment, props.index);
+    }
+
     return (
         <Box width="100%">
             <ListItem>
@@ -49,7 +53,7 @@ const Comment = (props) => {
                         secondary={new Date(props.comment.date).toDateString()} />
 
                         {auth.currentUser.userId === props.comment.userId &&
-                            <IconButton aria-label="edit post">
+                            <IconButton aria-label="edit post" onClick={handleSwitchToEdit}>
                                 <Edit />
                             </IconButton>
                         }

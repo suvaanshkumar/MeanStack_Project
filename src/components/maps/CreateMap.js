@@ -2,7 +2,7 @@ import React from 'react';
 import { compose, withStateHandlers } from "recompose";
 import {GoogleMap, withScriptjs, withGoogleMap, Marker} from 'react-google-maps';
 
-const CustomMap = compose(
+const CreateMap = compose(
     withStateHandlers(() => ({
         isMarkerShown: false,
         markerPosition: null
@@ -24,4 +24,4 @@ const CustomMap = compose(
 }
 );
 
-export default CustomMap;
+export default CreateMap;
