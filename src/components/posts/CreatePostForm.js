@@ -1,9 +1,12 @@
 import { Box, Button, Card, CardContent, CircularProgress, FormControl, MenuItem, Select, TextField, Typography } from '@material-ui/core';
 import axios from 'axios';
 import React, { useEffect, useRef, useState } from 'react';
-import CustomMap from './CustomMap';
+import { useHistory, useParams } from 'react-router';
+import CreateMap from '../maps/CreateMap';
 
 const CreatePostForm = (props) => {
+
+    const {postID} = useParams();
 
     const [post, setPost] = useState({
         title: '',
@@ -15,11 +18,14 @@ const CreatePostForm = (props) => {
     });
     const [image, setImage] = useState(null);
     const fileInputRef = useRef();
+    const history = useHistory();
     const mapRef = useRef();
     const [focus, setFocus] = useState(false);
     const [categories, setCategories] = useState([]);
     const [countries, setCountries] = useState([]);
-    const [loading, setLoading] = useState(false); 
+    const [loading, setLoading] = useState(false);
+    const [mode, setMode] = useState('create');
+    const [coordinates, setCoordinates] = useState({});
 
     const handleChange = (e) => {
         setPost( {...post, [e.target.name] : e.target.value} );
@@ -42,6 +48,7 @@ const CreatePostForm = (props) => {
 
     useEffect(() => {
         const loadData = async() => {
+            setLoading(true);
             const categoryData = await axios.get(process.env.REACT_APP_BACKEND_URL + 'categories');
             const countryData = await axios.get('https://restcountries.eu/rest/v2/all');
             setCategories(categoryData.data);
@@ -51,8 +58,27 @@ const CreatePostForm = (props) => {
                 category: categoryData.data[0].header,
                 country: countryData.data[0].name
             });
+            if (postID){
+                setMode('edit');
+                const result = await axios.get(process.env.REACT_APP_BACKEND_URL + 'posts/' + postID);
+                const fetchedPost = result.data.post;
+                setPost({
+                    title: fetchedPost.title,
+                    place: fetchedPost.place,
+                    country: fetchedPost.country,
+                    image: '',
+                    description: fetchedPost.description,
+                    category: fetchedPost.category
+                });
+                setCoordinates({
+                    lat: fetchedPost.lat,
+                    lng: fetchedPost.lng
+                })
+            }
+            setLoading(false);
         }
         loadData();
+        
     },[]);
 
     useEffect(() => {
@@ -102,6 +128,45 @@ const CreatePostForm = (props) => {
         }
     }
 
+    const handleEdit = async (e) => {
+        e.preventDefault();
+        
+        console.log(post);
+        const location = (mapRef.current.state.markerPosition);
+        let config = {
+            headers: {
+                'Content-Type': 'application/json',
+                'x-auth-token': localStorage.getItem('token')
+            },
+        };
+
+        let data = {
+            ...post, 
+            lat: coordinates.lat,
+            lng: coordinates.lng,
+            id: postID
+        };
+        console.log(data);
+
+        try {
+            setLoading(true);
+            const response = await axios.put(
+                process.env.REACT_APP_BACKEND_URL + 'posts',
+                data,
+                config
+            );
+            setLoading(false);
+
+            if (response.status === 200){
+                history.push("/posts");
+            }
+            console.log(response);
+
+        } catch (err) {
+            console.log(err.response.data);
+        }
+    }
+
     const handleDragOver = (e) => {
         e.preventDefault();
     }
@@ -142,7 +207,7 @@ const CreatePostForm = (props) => {
         <Card>
             <CardContent>
                 {/* <form onSubmit={handleSubmit} encType="multipart"> */}
-                    <h2>Create New Post</h2>
+                    <h2>{mode==='edit' ? "Edit Post" : "Create New Post"}</h2>
                     <hr/>
                     <Box display="flex" flexDirection="row" alignItems="center"
                      width="80%" marginTop="20px">
@@ -200,7 +265,7 @@ const CreatePostForm = (props) => {
                     <Box width="100%" marginTop="20px">
                         <Typography variant="h6">Location:</Typography>
                         <Box width="100%" height="200px">                          
-                            <CustomMap 
+                            <CreateMap
                                 googleMapURL={`https://maps.googleapis.com/maps/api/js?v=3.exp&language=EN&key=
                                 ${process.env.REACT_APP_GOOGLE_KEY}`}
                                 loadingElement={<div style={{ height: `100%` }} />}
@@ -239,7 +304,10 @@ const CreatePostForm = (props) => {
                     </Box>
 
                     <Box display="flex" justifyContent="center" marginTop="40px">
-                        <Button variant="contained" color="primary" onClick={handleSubmit}>Save</Button>
+                        <Button variant="contained" color="primary"
+                        onClick={mode==='edit' ? handleEdit : handleSubmit}>
+                            {mode==='edit' ? 'Edit' : 'Save'}
+                        </Button>
                     </Box>
 
                 {/* </form> */}

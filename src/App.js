@@ -88,7 +88,7 @@ const App = () => {
           <Switch>
             <Route path="/" exact component={Login}/>
             <Route path="/posts" component={Posts}/>
-            <Route path="/createPost" component={CreatePostForm}/>
+            <Route path="/createPost/:postID?" component={CreatePostForm}/>
             <Route path="/categories" component={Categories}/>
             <Route path="/home" component={Home}/>
             <Route path="/signup" component={Signup}/>

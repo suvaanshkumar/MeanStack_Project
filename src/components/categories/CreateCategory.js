@@ -1,7 +1,8 @@
-import { Box, Button, Card, CardContent, CircularProgress, FormControl, MenuItem, Select, TextField, Typography } from '@material-ui/core';
+import {palette, FormLabel,Box, Button, Card, CardContent, CircularProgress, FormControl, MenuItem, Select, TextField, Typography } from '@material-ui/core';
 import axios from 'axios';
-import React, { useEffect, useRef, useState } from 'react';
-
+import React, {  useContext,useEffect, useRef, useState } from 'react';
+import AuthContext from '../../contexts/AuthContext';
+import { useHistory } from 'react-router-dom';
 
 const CreateCategory = (props) => {
 
@@ -10,15 +11,42 @@ const CreateCategory = (props) => {
         description: '',
         image: '',
     });
+    const history = useHistory();
     const [image, setImage] = useState(null);
     const fileInputRef = useRef();
     const [focus, setFocus] = useState(false);
     const [loading, setLoading] = useState(false); 
-
+    const [errors, setErrors] = useState({});
     const handleChange = (e) => {
         setCategory( {...category, [e.target.name] : e.target.value} );
     };
+    const auth = useContext(AuthContext);
+    const validateInput = async () => {
+        let inputErrors = {};
+        if (!category.image){
+            inputErrors.image = 'Please put image ';
+        }
+        if (!auth.isLoggedIn){
+            inputErrors.login = 'Please Log in ';
+        }
+        if (category.header == '') {
+            inputErrors.header = 'Please provide header';
+        } 
 
+        if (category.description.length < 10) {
+            inputErrors.description = 'Please provide description longer than 10 characters';
+        }
+
+        if (inputErrors.header || inputErrors.password || inputErrors.login){
+            
+            setErrors(inputErrors);
+            return false;
+        }
+
+        setErrors({});
+        return true;
+
+    }
 
     const readFileAsync = (file) => {
         return new Promise((resolve, reject) => {
@@ -45,7 +73,10 @@ const CreateCategory = (props) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        
+        const formValid = await validateInput();
+        if (!formValid){
+            return;
+        }
         console.log(category);
         let config = {
             headers: {
@@ -53,7 +84,6 @@ const CreateCategory = (props) => {
                 'x-auth-token': localStorage.getItem('token')
             },
         };
-
         try {
             setLoading(true);
             const response = await axios.post(
@@ -62,14 +92,19 @@ const CreateCategory = (props) => {
                 config
             );
             setLoading(false);
-
+            if (response.status === 200) {
+                //redirecting to categories page
+                history.push('/categories');
+            }
             console.log(response);
 
         } catch (err) {
             console.log(err.response.data);
         }
-    }
 
+        
+    }
+    //functions for image
     const handleDragOver = (e) => {
         e.preventDefault();
     }
@@ -99,9 +134,7 @@ const CreateCategory = (props) => {
 
     if (loading) return (
         <Box display="flex" alignItems="center" justifyContent="center" height="100%">
-
           <CircularProgress size={80}/>
-
         </Box>
     )
 
@@ -112,16 +145,20 @@ const CreateCategory = (props) => {
                 
                     <h2>Create New Category</h2>
                     <hr/>
-                    <Box display="flex" flexDirection="row" alignItems="center"
+                    {!auth.isLoggedIn &&
+                        <Box color="secondary.main">
+                        ** Please login first 
+                        </Box>
+                    }
+                    <Box   display="flex" flexDirection="row" alignItems="center"
                      width="80%" marginTop="20px">
                         <Typography variant="h6">Category Header:</Typography>
                         <Box marginLeft="10px">
-                            <TextField required variant="outlined" label="Category" size="small"
+                            <TextField  error={errors.header ? true : false}
+                        helperText={errors.header ? errors.header : null} required variant="outlined" label="Category" size="small"
                                 name="header" onChange={handleChange} value={category.header}/>
                         </Box>
                     </Box>
-
-                
 
                     <Box marginTop="20px">
                         <Typography variant="h6">Picture:</Typography>
@@ -133,10 +170,15 @@ const CreateCategory = (props) => {
                             {(image) &&
                                 <div>{image.name}</div>
                             }
-                            {(!image) &&
+                            {(!image) && 
                                 <div>Drop Image here or click to Upload</div>
                             }
                         </Box>
+                        {errors.image &&
+                            <Box color="secondary.main">
+                                ** Please put image
+                            </Box>
+                        }
                         <Box display="none">
                             <input ref={fileInputRef} type="file" onChange={fileSelected}/>
                         </Box>
@@ -145,17 +187,15 @@ const CreateCategory = (props) => {
                     <Box display="flex" flexDirection="column" alignItems="flex-start" marginTop="30px">
                         <Typography variant="h6">Description:</Typography>
                         <Box display="block" marginTop="10px" width="100%">
-                            <TextField variant="outlined" label="Description" multiline rows={4} fullWidth
+                            <TextField  error={errors.description ? true : false}
+                        helperText={errors.description ? errors.description : null} variant="outlined" label="Description" multiline rows={4} fullWidth
                                 name="description" onChange={handleChange} value={category.description}/>
                         </Box>
                     </Box>
-
+                   
                     <Box display="flex" justifyContent="center" marginTop="40px">
                         <Button variant="contained" color="primary" onClick={handleSubmit}>Save</Button>
                     </Box>
-
-                
-                
 
             </CardContent>
         </Card>
