@@ -10,16 +10,19 @@ import axios from "axios";
 import { useHistory } from "react-router";
 import CommentList from "../comments/CommentList";
 import { Link } from "react-router-dom";
+import DimensionContext from "../../contexts/DimensionContext";
 
 const Post = (props) => {
 
   const auth = useContext(AuthContext);
+  const width = useContext(DimensionContext);
   const history = useHistory();
 
   const [openMap, setOpenMap] = useState(false);
   const [likedByUser, setLikedByUser] = useState(false);
   const [numOfLikes, setNumOfLikes] = useState(0);
   const [showComments, setShowComments] = useState(false);
+
 
   useEffect(() => {
     setNumOfLikes(props.post.likes.length);
@@ -30,6 +33,7 @@ const Post = (props) => {
     if(like){
       setLikedByUser(true);
     }
+
   },[]);
 
   const handleOpenMap = () => {
@@ -142,7 +146,9 @@ const Post = (props) => {
       <Box width="100%">
         <MapDialog open={openMap} close={handleCloseMap}
         location={{lat: props.post.lat, lng: props.post.lng}}/>
-        <Box width="40%" marginTop="20px" marginX="auto">
+        <Box width={width < 1023 ? "100%" : "40%"}
+        padding={ width < 1023 ? "16px" : "0"}
+        marginTop="20px" marginX="auto">
           
             <Card>
                 <CardHeader
