@@ -16,11 +16,18 @@ import CreateCategory from './components/categories/CreateCategory';
 import { useCallback, useEffect, useState } from 'react';
 import AuthContext from './contexts/AuthContext';
 import UserPosts from './components/posts/UserPosts';
+import DimensionContext from './contexts/DimensionContext';
 
 const App = () => {
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [currentUser, setCurrentUser] = useState({})
+  const [currentUser, setCurrentUser] = useState({});
+  const [width, setWidth] = useState(0);
+
+  const updateDimensions = () => {
+    setWidth(window.innerWidth);
+  }
+
   const login = useCallback(() => {
     setIsLoggedIn(true);
     const authData = getAuthData();
@@ -35,6 +42,8 @@ const App = () => {
   }, []);
 
   useEffect(() => {
+    updateDimensions();
+    window.addEventListener("resize", updateDimensions);
     const authData = getAuthData();
     if (!authData){
       return;
@@ -74,6 +83,7 @@ const App = () => {
 
   return (
 
+    <DimensionContext.Provider value={width}>
     <AuthContext.Provider
       value={{
         isLoggedIn: isLoggedIn,
@@ -102,6 +112,7 @@ const App = () => {
         <Footer/>
       </BrowserRouter>
     </AuthContext.Provider>
+    </DimensionContext.Provider>
   );
 }
 

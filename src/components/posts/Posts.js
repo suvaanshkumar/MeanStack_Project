@@ -10,6 +10,8 @@ const Posts = () => {
     const [posts, setPosts] = useState([]);
     const [categories, setCategories] = useState([]);
     const [category, setCategory] = useState('');
+
+
     useEffect(() => {
         axios.get(process.env.REACT_APP_BACKEND_URL + 'posts').then((response) => {
             setPosts(response.data);

@@ -1,16 +1,23 @@
 import { AppBar, Box, Button, Divider, Drawer, IconButton, List, ListItem, ListItemIcon, ListItemText, Toolbar, Typography } from '@material-ui/core';
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import MenuIcon from '@material-ui/icons/Menu';
 import AuthContext from '../contexts/AuthContext';
 import { useHistory } from 'react-router';
 import { AccountCircle, Class, ContactMail, CreateNewFolder, Folder, Mms, PostAdd, Whatshot } from '@material-ui/icons';
+import DimensionContext from '../contexts/DimensionContext';
 
 const Header = (props) => {
 
     const auth = useContext(AuthContext);
+    const widthFromContext = useContext(DimensionContext);
     const history = useHistory();
 
     const [openMenu, setOpenMenu] = useState(false);
+    const [width, setWidth] = useState(0);
+
+    useEffect(() => {
+        setWidth(widthFromContext);
+    },[widthFromContext])
 
     const handleLogOut = () => {
         auth.logout();
@@ -87,9 +94,11 @@ const Header = (props) => {
         <div>
             <AppBar position="static" className="header">
                 <Toolbar>
+                    {width < 1023 && 
                     <IconButton edge="start" color="inherit" aria-label="menu" onClick={toggleMenu}>
                         <MenuIcon/>
                     </IconButton>
+                    }
                     <Drawer anchor="left" open={openMenu} onClose={toggleMenu}>
                     <div
                     role="presentation"
@@ -98,13 +107,13 @@ const Header = (props) => {
                     >
                         <List>
                         {links.map((l) => (
-                            <ListItem button key={l.text}>
+                            <ListItem button component="a" href={l.link} key={l.text}>
                             <ListItemIcon>{l.image}</ListItemIcon>
                             <ListItemText primary={l.text} />
                             </ListItem>
                         ))}
                         </List>
-                        <Divider />
+                        {/* <Divider />
                         <List>
                         {authLinks.map((al) => (
                             <div>
@@ -116,7 +125,7 @@ const Header = (props) => {
                             }
                             </div>
                         ))}
-                        </List>
+                        </List> */}
                     </div>
                     </Drawer>
                     <Typography variant="h6" className="header">
@@ -125,9 +134,13 @@ const Header = (props) => {
 
                     <span className="spacer"/>
 
+                    {width >= 1023 &&
+                    <Box>
                     {links.map((l,index) => (
                         <Button color="inherit" href={l.link} key={index}>{l.text}</Button>
                     ))}
+                    </Box>
+                    }
                     {/* <Button color="inherit" href="/posts">Posts</Button>
                     <Button color="inherit" href="/createPost">Create Post</Button>
                     <Button color="inherit" href="/categories">Categories</Button>

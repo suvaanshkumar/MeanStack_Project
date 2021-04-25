@@ -1,12 +1,14 @@
-import { Box, Button, Card, CardContent, CircularProgress, FormControl, MenuItem, Select, TextField, Typography } from '@material-ui/core';
+import { Box, Button, Card, CardContent, CircularProgress, FormControl, Grid, MenuItem, Select, TextField, Typography } from '@material-ui/core';
 import axios from 'axios';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { useHistory, useParams } from 'react-router';
+import DimensionContext from '../../contexts/DimensionContext';
 import CreateMap from '../maps/CreateMap';
 
 const CreatePostForm = (props) => {
 
     const {postID} = useParams();
+    const width = useContext(DimensionContext);
 
     const [post, setPost] = useState({
         title: '',
@@ -203,12 +205,34 @@ const CreatePostForm = (props) => {
     )
 
     return (
-        <Box width="60%" marginX="auto" marginTop="40px">
+        <Box width={ width < 1023 ? "100%" : "60%" }
+        padding={ width < 1023 ? "16px" : "0" }
+        marginX="auto" marginTop="40px">
         <Card>
             <CardContent>
                 {/* <form onSubmit={handleSubmit} encType="multipart"> */}
                     <h2>{mode==='edit' ? "Edit Post" : "Create New Post"}</h2>
                     <hr/>
+
+                    {/* <Grid container spacing={3} alignItems="center">
+                        <Grid item lg={4}>
+                            <Typography variant="h6">Post Title:</Typography>
+                        </Grid>
+                        <Grid item>
+                            <TextField required variant="outlined" label="Title" size="small"
+                                name="title" onChange={handleChange} value={post.title}/>
+                        </Grid>
+                        <Grid item lg={4}>
+                            <Typography variant="h6">Place:</Typography>
+                        </Grid>
+                        <Grid item>
+                            <TextField required variant="outlined" label="Place" size="small"
+                                name="place" onChange={handleChange} value={post.place}/>
+                        </Grid>
+                    </Grid> */}
+
+
+
                     <Box display="flex" flexDirection="row" alignItems="center"
                      width="80%" marginTop="20px">
                         <Typography variant="h6">Post Title:</Typography>
