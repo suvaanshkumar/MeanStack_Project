@@ -1,14 +1,16 @@
 import axios from "axios";
-import React, { useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import { Box, Paper,Typography } from '@material-ui/core';
 
 import { useState } from "react";
 import Post from "./Post";
 import { useParams } from "react-router";
+import DimensionContext from "../../contexts/DimensionContext";
 
 const UserPosts = () => {
 
     const {userId} = useParams();
+    const width = useContext(DimensionContext);
 
     const [posts, setPosts] = useState([]);
     const [username, setUsername] = useState('');
@@ -26,7 +28,9 @@ const UserPosts = () => {
     return (
 
         <div>
-            <Box width="40%" marginX="auto" marginTop="30px">
+            <Box width={ width < 1023 ? "100%" : "60%" }
+            padding={ width < 1023 ? "16px" : "0" }
+            marginX="auto" marginTop="30px">
             <Paper elevation={3}>
                 <Box padding="16px" display="flex" justifyContent="space-between" alignItems="center">
                     <Typography variant="h4" component="div">
