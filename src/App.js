@@ -16,6 +16,8 @@ import CreateCategory from './components/categories/CreateCategory';
 import { useCallback, useEffect, useState } from 'react';
 import AuthContext from './contexts/AuthContext';
 import UserPosts from './components/posts/UserPosts';
+import Countries from './components/SearchPage';
+import CountryDetail from './components/browse/countrydetail';
 
 const App = () => {
 
@@ -94,6 +96,8 @@ const App = () => {
             <Route path="/signup" component={Signup}/>
             <Route path="/contactUs" component={ContactForm}/>
             <Route path="/trending" component={Trending}/>
+            <Route path="/browse" component={Countries}/>
+            <Route path="/country/:alpha2Code" component={CountryDetail} />
             <Route path="/createCategory" component={CreateCategory}/>
             <Route path="/user/:userId" component={UserPosts}/>
           </Switch>
