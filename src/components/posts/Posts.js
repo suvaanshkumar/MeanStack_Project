@@ -10,16 +10,14 @@ const Posts = () => {
     const [posts, setPosts] = useState([]);
     const [categories, setCategories] = useState([]);
     const [category, setCategory] = useState('');
+
+
     useEffect(() => {
         axios.get(process.env.REACT_APP_BACKEND_URL + 'posts').then((response) => {
             setPosts(response.data);
-            console.log(response);
         });
-    },[]);
-    useEffect(() => {
         axios.get(process.env.REACT_APP_BACKEND_URL + 'categories').then((response) => {
             setCategories(response.data);
-            console.log(response);
         });
     },[]);
 
@@ -35,6 +33,13 @@ const Posts = () => {
         });
         }
     },[category]);
+
+    const handleDelete = (postID) => {
+        let refreshedPosts = [...posts];
+        refreshedPosts = refreshedPosts.filter(p => p._id !== postID);
+        setPosts(refreshedPosts);
+    }
+
     return (
 
         <div>
@@ -56,7 +61,7 @@ const Posts = () => {
                 </Box>
 
             {posts.map((p) => (
-                <Post post={p} key={p._id}/> 
+                <Post post={p} key={p._id} handleDelete={handleDelete}/> 
             ))}
         </div>
      

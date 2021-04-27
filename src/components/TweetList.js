@@ -1,75 +1,86 @@
-import React from 'react'
-const Twit = require('twit')
-const notifier = require('node-notifier');
-const open = require('open');
-const franc = require('franc')
+class BodyData extends React.Component {
+  state = {
+    query: "",
+    data: [],
+    filteredData: []
+  };
 
+  handleInputChange = event => {
+    const query = event.target.value;
 
-
-const apikey = 'FOHXbolnVQlA86bzM351DuSUl'
-const apiSecretKey = 'Oo1WYL3zhsjdxOa0mkodH2HGtaARlCVwHnATcKbRsqolLp2eO0'
-const accessToken = '448564584-vlORezOHzrl63J6UWaNNn7143DJejYtpR8UcdeZk'
-const accessTokenSecret = 'SKRrO8z8p0aypVdtlQ7K6j8FiWM7ZoZB9DKRcYmZEeOgN'
-
-var T = new Twit({
-  consumer_key:         apikey,
-  consumer_secret:      apiSecretKey,
-  access_token:         accessToken,
-  access_token_secret:  accessTokenSecret,
-});
-
-( function getTweets() {
-
-    // //1. GET RECENT TWEETS
-     //T.get('search/tweets', { q: '#tesla since:2020-04-15', count: 100 }, function(err, data, response) {
-    //   const tweets = data.statuses
-    //   // .map(tweet => `LANG: ${franc(tweet.text)} : ${tweet.text}`) //CHECK LANGUAGE
-    //   .map(tweet => tweet.text)
-    //   .filter(tweet => tweet.toLowerCase().includes('elon'));
-    //   console.log(tweets);
-    // })
-
-    // //2. REAL TIME MONITORING USING STREAM (HASHTAG)
-     var stream = T.stream('statuses/filter', { track: '#travelling' })
-     stream.on('tweet', function (tweet) {
-         console.log(tweet.text);
-         console.log('Language: ' + franc(tweet.text));
-         console.log('------');
-     })
-
-    // 3. REAL TIME MONITORING USING STREAM (LOCATION)
-    //var sanFrancisco = [ '-122.75', '36.8', '-121.75', '37.8' ]
-    //var stream = T.stream('statuses/filter', { locations: sanFrancisco })
-    
-    //SHOW NOTIFICATION FOR EACH RECEIVED TWEET
-    stream.on('tweet', function (tweet) {
-      console.log(tweet.text);
-      let url = `https://twitter.com/${tweet.user.screen_name}/status/${tweet.id_str}`
-
-      notifier.notify({
-        title: tweet.user.name,
-        message: tweet.text
+    this.setState(prevState => {
+      const filteredData = prevState.data.filter(element => {
+        return element.name.toLowerCase().includes(query.toLowerCase());
       });
 
-      notifier.on('click', async function(notifierObject, options, event) {
-        console.log('clicked');
-        await open(url);
+      return {
+        query,
+        filteredData
+      };
+    });
+  };
+
+  getData = () => {
+    fetch(`https://restcountries.eu/rest/v2/all`)
+      .then(response => response.json())
+      .then(data => {
+        const { query } = this.state;
+        const filteredData = data.filter(element => {
+          return element.name.toLowerCase().includes(query.toLowerCase());
+        });
+
+        this.setState({
+          data,
+          filteredData
+        });
       });
-    })
-})();
+  };
 
-const TweetList = (props) => {
+  componentWillMount() {
+    this.getData();
+  }
 
-    
-
+  render() {
     return (
-        <div>
-           
-              <h1>Hello</h1>
-
-        </div>
+      <div className="searchForm">
+        <form>
+          <input
+            placeholder="Search for..."
+            value={this.state.query}
+            onChange={this.handleInputChange}
+          />
+        </form>
+        <div>{this.state.filteredData.map(i => <p>{i.name}</p>)}</div>
+      </div>
     );
+  }
+}
+/*import React from "react";
+import "./styles.css";
+import YoutubeEmbed from "./YoutubeEmbed";
 
-};
 
-export default TweetList;
+export default function TweetList() {
+  return (
+    <div>
+    <div className="App">
+      <h1>Sydney</h1>
+      <YoutubeEmbed embedId="4FdlOJicGBk" />
+    </div><span></span>
+    <div className="App">
+      <h1>LA</h1>
+      <YoutubeEmbed embedId="Co8Ljb4RLe4" />
+    </div>
+    <div className="App">
+      <h1>Tokyo</h1>
+      <YoutubeEmbed embedId="0nTO4zSEpOs" />
+    </div>
+    <div className="App">
+      <h1>Dubai</h1>
+      <YoutubeEmbed embedId="jB2Z9PA7iKI" />
+    </div>
+    </div>
+    
+  );
+}
+*/

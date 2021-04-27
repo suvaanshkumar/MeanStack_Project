@@ -16,11 +16,20 @@ import CreateCategory from './components/categories/CreateCategory';
 import { useCallback, useEffect, useState } from 'react';
 import AuthContext from './contexts/AuthContext';
 import UserPosts from './components/posts/UserPosts';
+import Countries from './components/SearchPage';
+import CountryDetail from './components/browse/countrydetail';
+import DimensionContext from './contexts/DimensionContext';
 
 const App = () => {
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [currentUser, setCurrentUser] = useState({})
+  const [currentUser, setCurrentUser] = useState({});
+  const [width, setWidth] = useState(0);
+
+  const updateDimensions = () => {
+    setWidth(window.innerWidth);
+  }
+
   const login = useCallback(() => {
     setIsLoggedIn(true);
     const authData = getAuthData();
@@ -35,6 +44,8 @@ const App = () => {
   }, []);
 
   useEffect(() => {
+    updateDimensions();
+    window.addEventListener("resize", updateDimensions);
     const authData = getAuthData();
     if (!authData){
       return;
@@ -74,6 +85,7 @@ const App = () => {
 
   return (
 
+    <DimensionContext.Provider value={width}>
     <AuthContext.Provider
       value={{
         isLoggedIn: isLoggedIn,
@@ -88,12 +100,14 @@ const App = () => {
           <Switch>
             <Route path="/" exact component={Login}/>
             <Route path="/posts" component={Posts}/>
-            <Route path="/createPost" component={CreatePostForm}/>
+            <Route path="/createPost/:postID?" component={CreatePostForm}/>
             <Route path="/categories" component={Categories}/>
             <Route path="/home" component={Home}/>
             <Route path="/signup" component={Signup}/>
             <Route path="/contactUs" component={ContactForm}/>
             <Route path="/trending" component={Trending}/>
+            <Route path="/browse" component={Countries}/>
+            <Route path="/country/:alpha2Code" component={CountryDetail} />
             <Route path="/createCategory" component={CreateCategory}/>
             <Route path="/user/:userId" component={UserPosts}/>
           </Switch>
@@ -102,6 +116,7 @@ const App = () => {
         <Footer/>
       </BrowserRouter>
     </AuthContext.Provider>
+    </DimensionContext.Provider>
   );
 }
 

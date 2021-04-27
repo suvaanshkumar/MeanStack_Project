@@ -4,22 +4,25 @@ import { Bookmark, ChatBubble, Delete, Edit, Favorite, MoreVert } from "@materia
 import { store } from 'react-notifications-component';
 import 'react-notifications-component/dist/theme.css';
 import 'animate.css';
-import MapDialog from "./MapDialog";
+import MapDialog from "../maps/MapDialog";
 import AuthContext from "../../contexts/AuthContext";
 import axios from "axios";
 import { useHistory } from "react-router";
 import CommentList from "../comments/CommentList";
 import { Link } from "react-router-dom";
+import DimensionContext from "../../contexts/DimensionContext";
 
 const Post = (props) => {
 
   const auth = useContext(AuthContext);
+  const width = useContext(DimensionContext);
   const history = useHistory();
 
   const [openMap, setOpenMap] = useState(false);
   const [likedByUser, setLikedByUser] = useState(false);
   const [numOfLikes, setNumOfLikes] = useState(0);
   const [showComments, setShowComments] = useState(false);
+
 
   useEffect(() => {
     setNumOfLikes(props.post.likes.length);
@@ -30,6 +33,7 @@ const Post = (props) => {
     if(like){
       setLikedByUser(true);
     }
+
   },[]);
 
   const handleOpenMap = () => {
@@ -54,6 +58,38 @@ const Post = (props) => {
       }
     })
   }
+
+  const handleDelete = async () => {
+
+
+    let headers = {
+      'Content-Type': 'application/json',
+      'x-auth-token': localStorage.getItem('token')
+    };
+
+    let data = {
+        id: props.post._id
+    };
+
+    try {
+      const response = await axios.delete(
+        process.env.REACT_APP_BACKEND_URL + 'posts',
+        {
+            headers,
+            data
+        }
+      );
+
+      if (response.status === 204){
+        props.handleDelete(props.post._id);
+      }
+      console.log(response);
+
+    } catch (err) {
+        console.log(err.response.data);
+    }
+  }
+
 
   const handleLike = async () => {
 
@@ -108,8 +144,11 @@ const Post = (props) => {
 
     return (
       <Box width="100%">
-        <MapDialog open={openMap} close={handleCloseMap}/>
-        <Box width="40%" marginTop="20px" marginX="auto">
+        <MapDialog open={openMap} close={handleCloseMap}
+        location={{lat: props.post.lat, lng: props.post.lng}}/>
+        <Box width={width < 1023 ? "100%" : "40%"}
+        padding={ width < 1023 ? "16px" : "0"}
+        marginTop="20px" marginX="auto">
           
             <Card>
                 <CardHeader
@@ -117,10 +156,10 @@ const Post = (props) => {
                     <Box>
                       {auth.currentUser.userId === props.post.userId &&
                         <Box>
-                          <IconButton aria-label="edit post">
+                          <IconButton aria-label="edit post" href={"/createPost/" + props.post._id}>
                               <Edit />
                           </IconButton>
-                          <IconButton aria-label="settings">
+                          <IconButton aria-label="settings" onClick={handleDelete}>
                             <Delete />
                           </IconButton>
                         </Box>
